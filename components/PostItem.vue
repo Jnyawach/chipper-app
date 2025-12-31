@@ -1,11 +1,37 @@
 <script setup>
 import { HeartIcon } from '@heroicons/vue/24/outline'
-
-defineProps({
+const { showErrorModal } = useHelpers()
+const props=defineProps({
   post: {
     type: Object,
     required: true
   }
+})
+
+const favoriteStore = useFavorite()
+const saving = ref(false)
+const user = useUser()
+const followUser = async (userId,action) => {
+  if(user.isGuest) {
+    showErrorModal(new Error('You must be logged in to follow users'))
+    return
+  }
+  saving.value = true
+  try {
+    if (action==='follow'){
+      await  favoriteStore.favoriteUser(userId)
+    }else {
+      await  favoriteStore.unFavoriteUser(userId)
+    }
+  }catch (e) {
+    showErrorModal(e)
+  }
+  saving.value = false
+}
+
+
+const hasFavorited = computed(() => {
+  return (favoriteStore.favorites?.users || []).some(user => user.id === props.post.user.id)
 })
 </script>
 
@@ -18,9 +44,13 @@ defineProps({
       <div>
         by <strong>{{ post.user.name }}</strong>
       </div>
-      <button class="font-medium bg-blue-200 text-sm px-2 rounded-full">
-        Follow
+      <button class="font-medium bg-blue-200 text-sm px-2 rounded-full"
+              @click="followUser(post.user.id, hasFavorited ? 'unfollow' : 'follow')"
+              :disabled="saving"
+      >
+        {{hasFavorited?'Unfollow':'Follow' }}
       </button>
+
     </div>
     <p>
       {{ post.body }}

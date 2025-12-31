@@ -8,6 +8,9 @@ const user = useUser()
 const postStore=usePost()
 
 postStore.fetchPosts()
+const favoriteStore = useFavorite()
+if(!user.isGuest) favoriteStore.fetchFavorites()
+
 </script>
 
 <template>
