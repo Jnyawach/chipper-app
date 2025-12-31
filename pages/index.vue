@@ -8,6 +8,7 @@ const user = useUser()
 const postStore=usePost()
 
 postStore.fetchPosts()
+postStore.pollNewPosts()
 const favoriteStore = useFavorite()
 if(!user.isGuest) favoriteStore.fetchFavorites()
 

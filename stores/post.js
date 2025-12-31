@@ -22,13 +22,20 @@ export const usePost = defineStore('post', () => {
 
     }
 
+    async function pollNewPosts() {
+        setInterval(async () => {
+            await fetchPosts()
+        }, 30000)
+    }
+
 
 
     return {
        started,
          posts,
         createPost,
-        fetchPosts
+        fetchPosts,
+        pollNewPosts
     }
 })
 
