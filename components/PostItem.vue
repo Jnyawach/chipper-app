@@ -13,7 +13,7 @@ const saving = ref(false)
 const user = useUser()
 const followUser = async (userId,action) => {
   if(user.isGuest) {
-    showErrorModal(new Error('You must be logged in to follow users'))
+    showErrorModal(new Error('You must be logged in to follow users'),'You must be logged in to follow users')
     return
   }
   saving.value = true
@@ -32,6 +32,28 @@ const followUser = async (userId,action) => {
 
 const hasFavorited = computed(() => {
   return (favoriteStore.favorites?.users || []).some(user => user.id === props.post.user.id)
+})
+
+const followPost = async (postId,action) => {
+  if(user.isGuest) {
+    showErrorModal(new Error('You must be logged in to follow posts'),'You must be logged in to favorite posts')
+    return
+  }
+  saving.value = true
+  try {
+    if (action==='follow'){
+      await  favoriteStore.favoritePost(postId)
+    }else {
+      await  favoriteStore.unFavoritePost(postId)
+    }
+  }catch (e) {
+    showErrorModal(e)
+  }
+  saving.value = false
+}
+
+const hasFavoritedPost=computed(() => {
+  return (favoriteStore.favorites?.posts || []).some(post => post.id === props.post.id)
 })
 </script>
 
@@ -55,11 +77,16 @@ const hasFavorited = computed(() => {
     <p>
       {{ post.body }}
     </p>
-    <button class="bg-red-200 text-red-500 flex items-center justify-center gap-2 p-4 rounded-lg">
+    <button class=" flex items-center justify-center gap-2 p-4 rounded-lg"
+            :class="[ hasFavoritedPost ? 'text-red-500 bg-red-200' : 'text-blue-600 bg-blue-200' ]"
+            @click="followPost(post.id, hasFavoritedPost ? 'unfollow' : 'follow')"
+            :disabled="saving"
+    >
       <HeartIcon
         class="h-6 stroke-current" />
       <span class="font-bold">
-        Add to my favorites
+        {{hasFavoritedPost?'Remove from favorites':'Add to my favorites' }}
+
       </span>
     </button>
   </div>

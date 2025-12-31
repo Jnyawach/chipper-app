@@ -25,13 +25,27 @@ export const useFavorite = defineStore('favorite', () => {
 
     }
 
+    async function favoritePost(postId) {
+        const payload = await $api.post(`posts/${postId}/favorite`)
+        await fetchFavorites()
+
+    }
+
+    async function unFavoritePost(postId) {
+        const payload = await $api.delete(`posts/${postId}/favorite`)
+        await fetchFavorites()
+
+    }
+
 
 
     return {
         favorites,
         favoriteUser,
         unFavoriteUser,
-        fetchFavorites
+        fetchFavorites,
+        favoritePost,
+        unFavoritePost
     }
 })
 
