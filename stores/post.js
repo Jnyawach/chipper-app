@@ -17,7 +17,10 @@ export const usePost = defineStore('post', () => {
 
 
     async function createPost(postData) {
-        const payload = await $api.post('/posts', postData)
+        const payload = await $api.post('/posts', postData,
+            {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
         await fetchPosts()
 
     }

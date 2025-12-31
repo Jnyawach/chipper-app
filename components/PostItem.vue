@@ -74,6 +74,9 @@ const hasFavoritedPost=computed(() => {
       </button>
 
     </div>
+    <div v-if="post.image" class="border rounded-lg overflow-hidden">
+      <img :src="post.image" :alt="post.title" class="w-full rounded-lg" />
+    </div>
     <p>
       {{ post.body }}
     </p>
